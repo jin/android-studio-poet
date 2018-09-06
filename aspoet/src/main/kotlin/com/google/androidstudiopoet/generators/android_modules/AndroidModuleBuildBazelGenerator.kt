@@ -38,7 +38,7 @@ class AndroidModuleBuildBazelGenerator(val fileWriter: FileWriter) {
 
         val ruleClass = if (bazelBlueprint.isApplication) "android_binary" else "android_library"
         val targetName = bazelBlueprint.packageName.split(".")[1]
-        val ruleDefinition = """load("@gmaven_rules//:defs.bzl", "gmaven_artifact")
+        var ruleDefinition = """load("@gmaven_rules//:defs.bzl", "gmaven_artifact")
 
 $ruleClass(
     name = "$targetName",
@@ -48,6 +48,44 @@ $ruleClass(
     custom_package = "${bazelBlueprint.packageName}",
     visibility = ["//visibility:public"],${if (deps.isNotEmpty()) depsString else ""}
 )"""
+
+        if (bazelBlueprint.generateTests && !bazelBlueprint.isApplication) {
+            var testManifestContent = """<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.$targetName">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk
+        android:minSdkVersion="${bazelBlueprint.androidBuildConfig.minSdkVersion}"
+        android:targetSdkVersion="${bazelBlueprint.androidBuildConfig.targetSdkVersion}" />
+    <application>"""
+
+            for (activityIndex in 0 until bazelBlueprint.numOfActivities) {
+                ruleDefinition += """
+android_local_test(
+  name = "Activity${activityIndex}Test",
+  srcs = ["src/test/java/com/${targetName}/Activity${activityIndex}Test.java"],
+  manifest = "TestManifest.xml",
+  custom_package = "com.${targetName}",
+  deps = [
+    ":$targetName",
+    "@robolectric//bazel:robolectric",
+  ],
+)"""
+                testManifestContent += """
+        <activity android:name=".Activity$activityIndex" />
+"""
+            }
+
+            testManifestContent += """
+    </application>
+</manifest>"""
+
+
+            fileWriter.writeToFile(
+                testManifestContent,
+                bazelBlueprint.path.replaceAfterLast("/", "TestManifest.xml"))
+        }
 
         fileWriter.writeToFile(ruleDefinition, bazelBlueprint.path)
     }

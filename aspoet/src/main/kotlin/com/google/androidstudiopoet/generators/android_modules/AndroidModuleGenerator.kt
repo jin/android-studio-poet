@@ -30,6 +30,7 @@ class AndroidModuleGenerator(private val resourcesGenerator: ResourcesGenerator,
                              private val proguardGenerator: ProguardGenerator,
                              private val buildGradleGenerator: AndroidModuleBuildGradleGenerator,
                              private val buildBazelGenerator: AndroidModuleBuildBazelGenerator,
+                             private val robolectricTestGenerator: AndroidRobolectricTestGenerator,
                              private val fileWriter: FileWriter) {
 
     /**
@@ -47,6 +48,11 @@ class AndroidModuleGenerator(private val resourcesGenerator: ResourcesGenerator,
 
         if (generateBazelFiles) {
             buildBazelGenerator.generate(blueprint.buildBazelBlueprint)
+            if (blueprint.generateTests) {
+                fileWriter.mkdir(blueprint.mainPath.replace("main", "test"))
+                fileWriter.mkdir(blueprint.packagePath.replace("main", "test"))
+                blueprint.activityBlueprints.forEach({ robolectricTestGenerator.generate(it) })
+            }
         }
     }
 

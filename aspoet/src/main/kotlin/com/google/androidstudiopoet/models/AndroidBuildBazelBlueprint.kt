@@ -16,12 +16,17 @@ limitations under the License.
 
 package com.google.androidstudiopoet.models
 
+import com.google.androidstudiopoet.input.AndroidBuildConfig
 import com.google.androidstudiopoet.utils.joinPath
 
 class AndroidBuildBazelBlueprint(val isApplication: Boolean,
                                  moduleRoot: String, val packageName: String,
                                  override val extraLines: List<String>?,
-                                 additionalDependencies: Set<Dependency>) : AndroidModuleBuildSpecificationBlueprint {
+                                 additionalDependencies: Set<Dependency>,
+                                 val generateTests: Boolean,
+                                 val androidBuildConfig: AndroidBuildConfig,
+                                 val numOfActivities: Int
+) : AndroidModuleBuildSpecificationBlueprint {
     override val plugins = mutableSetOf<String>()
 
     val libraries: Set<GmavenBazelDependency> = createSetOfLibraries()
@@ -35,8 +40,7 @@ class AndroidBuildBazelBlueprint(val isApplication: Boolean,
                 GmavenBazelDependency("com.android.support:appcompat-v7:aar:26.1.0"),
                 GmavenBazelDependency("com.android.support.constraint:constraint-layout:aar:1.0.2"),
                 GmavenBazelDependency("com.android.support:multidex:aar:1.0.1"),
-                GmavenBazelDependency("com.android.support.test:runner:aar:1.0.1"),
+                GmavenBazelDependency("com.android.support.test:runner:aar:1.0.2"),
                 GmavenBazelDependency("com.android.support.test.espresso:espresso-core:aar:3.0.1"))
-        // TODO: Add Junit
     }
 }

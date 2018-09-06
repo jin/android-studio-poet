@@ -46,6 +46,7 @@ object Injector {
     private val amBazelBuildGenerator = AndroidModuleBuildBazelGenerator(fileWriter)
     private val buildGradleGenerator = ModuleBuildGradleGenerator(fileWriter)
     private val buildBazelGenerator = ModuleBuildBazelGenerator(fileWriter)
+    private val robolectricTestGenerator = AndroidRobolectricTestGenerator(fileWriter)
     private val gradleSettingsGenerator = GradleSettingsGenerator(fileWriter)
     private val projectBuildGradleGenerator = ProjectBuildGradleGenerator(fileWriter)
     private val gradlePropertiesGenerator = GradlePropertiesGenerator(fileWriter)
@@ -78,9 +79,11 @@ object Injector {
                     resourcesGenerator,
                     packagesGenerator,
                     activityGenerator,
-                    manifestGenerator, proguardGenerator,
+                    manifestGenerator,
+                    proguardGenerator,
                     amBuildGradleGenerator,
                     amBazelBuildGenerator,
+                    robolectricTestGenerator,
                     fileWriter)
 
     val modulesWriter =

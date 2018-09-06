@@ -59,6 +59,18 @@ http_archive(
 
 load("@gmaven_rules//:gmaven.bzl", "gmaven_rules")
 gmaven_rules()
+
+# ROBOLECTRIC_TAG = "a3ed8c83e3aada8ad5b9c3b58c57c9bd96e1f5c7"
+ROBOLECTRIC_TAG = "3996aef8319cc9dbf4cf51066ba21bfd058f5c01"
+
+http_archive(
+ name = "robolectric",
+ urls = ["https://github.com/jin/robolectric/archive/%s.tar.gz" % ROBOLECTRIC_TAG],
+ strip_prefix = "robolectric-%s" % ROBOLECTRIC_TAG,
+)
+
+load("@robolectric//bazel:robolectric.bzl", "robolectric_repositories")
+robolectric_repositories()
 """
 
           fileWriter.writeToFile(
