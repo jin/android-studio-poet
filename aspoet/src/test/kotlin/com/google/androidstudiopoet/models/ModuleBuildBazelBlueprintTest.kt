@@ -18,6 +18,7 @@ package com.google.androidstudiopoet.models
 
 import com.google.androidstudiopoet.testutils.assertEquals
 import com.google.androidstudiopoet.testutils.assertOn
+import com.google.androidstudiopoet.testutils.mock
 import com.google.androidstudiopoet.utils.joinPath
 import org.junit.Test
 
@@ -35,6 +36,6 @@ class ModuleBuildBazelBlueprintTest {
     private fun createModuleBuildBazelBlueprint(moduleRoot: String = "",
                                                 extraLines: List<String>? = null,
                                                 dependencies: Set<ModuleDependency> = setOf()
-    ) = ModuleBuildBazelBlueprint(dependencies, extraLines, moduleRoot)
+    ) = ModuleBuildBazelBlueprint(dependencies, false, extraLines, moduleRoot, mock())
 
 }

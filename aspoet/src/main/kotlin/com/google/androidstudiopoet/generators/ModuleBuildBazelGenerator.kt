@@ -16,12 +16,12 @@ limitations under the License.
 
 package com.google.androidstudiopoet.generators
 
-import com.google.androidstudiopoet.models.ModuleBuildSpecificationBlueprint
+import com.google.androidstudiopoet.models.ModuleBuildBazelBlueprint
 import com.google.androidstudiopoet.models.ModuleDependency
 import com.google.androidstudiopoet.writers.FileWriter
 
 class ModuleBuildBazelGenerator(private val fileWriter: FileWriter) {
-    fun generate(blueprint: ModuleBuildSpecificationBlueprint) {
+    fun generate(blueprint: ModuleBuildBazelBlueprint) {
         val deps: Set<String> = blueprint.dependencies.mapNotNull {
             when (it) {
                 is ModuleDependency -> "\"//${it.name}\""
@@ -34,11 +34,27 @@ class ModuleBuildBazelGenerator(private val fileWriter: FileWriter) {
     ],"""
         val ruleClass = "java_library"
         val targetName = blueprint.moduleName
-        val ruleDefinition = """$ruleClass(
+        var ruleDefinition = """$ruleClass(
     name = "$targetName",
     srcs = glob(["src/main/java/**/*.java"]),
     visibility = ["//visibility:public"],${if (deps.isNotEmpty()) depsString else ""}
 )"""
+
+        if (blueprint.generateTests) {
+            blueprint.javaConfig?.let {
+                for (packageIndex in 0 until it.packages) {
+                    for (classIdx in 0 until it.classesPerPackage) {
+                        ruleDefinition += """
+java_test(
+    name = "${targetName}_packageJava${packageIndex}_Foo${classIdx}_test",
+    srcs = ["src/test/java/${targetName}packageJava$packageIndex/Foo${classIdx}Test.java"],
+    deps = [":$targetName"],
+    test_class = "${targetName}packageJava$packageIndex.Foo${classIdx}Test",
+)"""
+                    }
+                }
+            }
+        }
 
         fileWriter.writeToFile(ruleDefinition, blueprint.path)
     }

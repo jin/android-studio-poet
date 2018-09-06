@@ -17,18 +17,19 @@ limitations under the License.
 package com.google.androidstudiopoet.models
 
 import com.google.androidstudiopoet.utils.joinPath
+import com.google.androidstudiopoet.input.CodeConfig
 
 class ModuleBuildBazelBlueprint(
         additionalDependencies: Set<Dependency>,
+        val generateTests: Boolean = false,
         override val extraLines: List<String>? = null,
-        moduleRoot: String
+        moduleRoot: String,
+        val javaConfig: CodeConfig?
 ) : ModuleBuildSpecificationBlueprint {
 
     override val moduleName = moduleRoot.split("/").last()
 
     override val path = moduleRoot.joinPath("BUILD.bazel")
-
-    override val plugins: Set<String> = setOf()
 
     override val dependencies = additionalDependencies
 

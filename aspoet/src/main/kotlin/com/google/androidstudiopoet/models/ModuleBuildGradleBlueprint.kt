@@ -32,7 +32,7 @@ class ModuleBuildGradleBlueprint(
 
     override val path = moduleRoot.joinPath("build.gradle")
 
-    override val plugins: Set<String> = createSetOfPlugins(pluginConfigs)
+    val plugins: Set<String> = createSetOfPlugins(pluginConfigs)
 
     override val dependencies = additionalDependencies + createSetOfMandatoryLibraries()
 
