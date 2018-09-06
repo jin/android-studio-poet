@@ -40,6 +40,22 @@ class ModuleBuildBazelGenerator(private val fileWriter: FileWriter) {
     visibility = ["//visibility:public"],${if (deps.isNotEmpty()) depsString else ""}
 )"""
 
+        if (blueprint.generateTests) {
+            blueprint.javaConfig?.let {
+                for (packageIndex in 0 until it.packages) {
+                    for (classIdx in 0 until it.classesPerPackage) {
+                        ruleDefinition += """
+java_test(
+    name = "${targetName}_packageJava${packageIndex}_Foo${classIdx}_test",
+    srcs = ["src/test/java/${targetName}packageJava$packageIndex/Foo${classIdx}Test.java"],
+    deps = [":$targetName"],
+    test_class = "${targetName}packageJava$packageIndex.Foo${classIdx}Test",
+)"""
+                    }
+                }
+            }
+        }
+
         fileWriter.writeToFile(ruleDefinition, blueprint.path)
     }
 }

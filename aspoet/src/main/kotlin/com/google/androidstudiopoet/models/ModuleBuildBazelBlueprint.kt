@@ -17,11 +17,14 @@ limitations under the License.
 package com.google.androidstudiopoet.models
 
 import com.google.androidstudiopoet.utils.joinPath
+import com.google.androidstudiopoet.input.CodeConfig
 
 class ModuleBuildBazelBlueprint(
         additionalDependencies: Set<Dependency>,
+        val generateTests: Boolean,
         moduleRoot: String,
-        name: String
+        name: String,
+        val javaConfig: CodeConfig?
 ) {
 
     val targetName = name
