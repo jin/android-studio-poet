@@ -34,7 +34,7 @@ class ModuleBuildBazelGenerator(private val fileWriter: FileWriter) {
     ],"""
         val ruleClass = "java_library"
         val targetName = blueprint.targetName
-        val ruleDefinition = """$ruleClass(
+        var ruleDefinition = """$ruleClass(
     name = "$targetName",
     srcs = glob(["src/main/java/**/*.java"]),
     visibility = ["//visibility:public"],${if (deps.isNotEmpty()) depsString else ""}
