@@ -37,10 +37,26 @@ class ModuleBuildBazelGeneratorTest {
         val expected = """java_library(
     name = "target_name",
     srcs = glob(["src/main/java/**/*.java"]),
-    visibility = ["//visibility:public"],
+    visibility = [
+        "//visibility:public",
+    ],
     deps = [
         "//library1",
-        "//library2"
+        "//library2",
+    ],
+)"""
+        verify(fileWriter).writeToFile(expected, "BUILD.bazel")
+    }
+
+    @Test
+    fun `generator does not write deps attribute if there are no dependencies`() {
+        val blueprint = getModuleBuildBazelBlueprint(dependencies = setOf())
+        buildBazelGenerator.generate(blueprint)
+        val expected = """java_library(
+    name = "target_name",
+    srcs = glob(["src/main/java/**/*.java"]),
+    visibility = [
+        "//visibility:public",
     ],
 )"""
         verify(fileWriter).writeToFile(expected, "BUILD.bazel")

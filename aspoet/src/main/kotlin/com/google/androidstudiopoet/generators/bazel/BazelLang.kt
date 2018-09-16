@@ -114,3 +114,14 @@ data class RawAttribute(override val name: String, override val value: String): 
 data class StringAttribute(override val name: String, override val value: String): Attribute {
     override fun toString() = "$name = \"$value\""
 }
+
+data class StringListAttribute(override val name: String, override val value: List<String>): Attribute {
+    override fun toString() : String {
+        val nestedIndent = BASE_INDENT.repeat(2)
+        return """$name = [
+$nestedIndent${value
+                .map { "\"$it\"" }
+                .joinToString(separator = ",\n$nestedIndent") { it }},
+$BASE_INDENT]"""
+    }
+}

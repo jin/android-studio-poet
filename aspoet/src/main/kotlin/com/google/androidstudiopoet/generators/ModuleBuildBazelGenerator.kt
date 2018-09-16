@@ -16,30 +16,41 @@ limitations under the License.
 
 package com.google.androidstudiopoet.generators
 
+import com.google.androidstudiopoet.generators.bazel.*
+import com.google.androidstudiopoet.generators.bazel.Target
+import com.google.androidstudiopoet.models.Dependency
 import com.google.androidstudiopoet.models.ModuleBuildBazelBlueprint
 import com.google.androidstudiopoet.models.ModuleDependency
 import com.google.androidstudiopoet.writers.FileWriter
 
 class ModuleBuildBazelGenerator(private val fileWriter: FileWriter) {
-    fun generate(blueprint: ModuleBuildBazelBlueprint) {
-        val deps: Set<String> = blueprint.dependencies.map {
-            when (it) {
-                is ModuleDependency -> "\"//${it.name}\""
-                else -> ""
-            }
-        }.toSet()
-        val depsString = """
-    deps = [
-        ${deps.joinToString(separator = ",\n        ") { it }}
-    ],"""
-        val ruleClass = "java_library"
-        val targetName = blueprint.targetName
-        val ruleDefinition = """$ruleClass(
-    name = "$targetName",
-    srcs = glob(["src/main/java/**/*.java"]),
-    visibility = ["//visibility:public"],${if (deps.isNotEmpty()) depsString else ""}
-)"""
 
-        fileWriter.writeToFile(ruleDefinition, blueprint.path)
+    fun generate(blueprint: ModuleBuildBazelBlueprint) {
+        fileWriter.writeToFile(
+                getJavaLibraryTarget(blueprint).toString(),
+                blueprint.path)
     }
+
+    private fun getJavaLibraryTarget(blueprint: ModuleBuildBazelBlueprint): Target {
+        var attributes = listOf(
+                StringAttribute("name", blueprint.targetName),
+                RawAttribute("srcs", "glob([\"src/main/java/**/*.java\"])"),
+                StringListAttribute("visibility", listOf("//visibility:public")))
+
+        if (blueprint.dependencies.isNotEmpty()) {
+            attributes += StringListAttribute("deps", getDependencyTargetLabels(blueprint.dependencies))
+        }
+
+        return Target("java_library", attributes)
+    }
+
+    private fun getDependencyTargetLabels(dependencies: Set<Dependency>): List<String> {
+        return dependencies.mapNotNull {
+            when (it) {
+                is ModuleDependency -> "//${it.name}" // `//module42` == `//module42:module42`
+                else -> null
+            }
+        }
+    }
+
 }
