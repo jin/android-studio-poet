@@ -16,7 +16,7 @@ class AndroidModuleBuildBazelGeneratorTest {
             isApplication = true,
             dependencies = setOf(
                 ModuleDependency("library1", mock(), "unused"),
-                GmavenBazelDependency("external:aar:1")
+                MavenBazelDependency("external:aar:1")
         ))
         androidModuleBuildBazelGenerator.generate(blueprint)
         val expected = """load("@gmaven_rules//:defs.bzl", "gmaven_artifact")
@@ -42,8 +42,8 @@ android_binary(
         val blueprint = getAndroidBuildBazelBlueprint(dependencies = setOf(
             ModuleDependency("library1", mock(), "unused"),
             ModuleDependency("library2", mock(), "unused"),
-            GmavenBazelDependency("external:aar:1"),
-            GmavenBazelDependency("external:aar:2")
+            MavenBazelDependency("external:aar:1"),
+            MavenBazelDependency("external:aar:2")
         ))
         androidModuleBuildBazelGenerator.generate(blueprint)
         val expected = """load("@gmaven_rules//:defs.bzl", "gmaven_artifact")

@@ -23,18 +23,18 @@ class AndroidBuildBazelBlueprint(val isApplication: Boolean,
                                  val packageName: String,
                                  additionalDependencies: Set<Dependency>,
                                  val name: String) {
-    val libraries: Set<GmavenBazelDependency> = createSetOfLibraries()
+    val libraries: Set<MavenBazelDependency> = createSetOfLibraries()
 
     val dependencies = additionalDependencies + libraries
 
     val path = moduleRoot.joinPath("BUILD.bazel")
 
-    private fun createSetOfLibraries(): Set<GmavenBazelDependency> {
+    private fun createSetOfLibraries(): Set<MavenBazelDependency> {
         return mutableSetOf(
-                GmavenBazelDependency("com.android.support:appcompat-v7:aar:26.1.0"),
-                GmavenBazelDependency("com.android.support.constraint:constraint-layout:aar:1.0.2"),
-                GmavenBazelDependency("com.android.support:multidex:aar:1.0.1"),
-                GmavenBazelDependency("com.android.support.test:runner:aar:1.0.1"),
-                GmavenBazelDependency("com.android.support.test.espresso:espresso-core:aar:3.0.1"))
+                MavenBazelDependency("com.android.support:appcompat-v7:aar:26.1.0"),
+                MavenBazelDependency("com.android.support.constraint:constraint-layout:aar:1.0.2"),
+                MavenBazelDependency("com.android.support:multidex:aar:1.0.1"),
+                MavenBazelDependency("com.android.support.test:runner:aar:1.0.1"),
+                MavenBazelDependency("com.android.support.test.espresso:espresso-core:aar:3.0.1"))
     }
 }

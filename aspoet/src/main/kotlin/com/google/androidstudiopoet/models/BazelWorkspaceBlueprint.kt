@@ -15,11 +15,15 @@ package com.google.androidstudiopoet.models
 
 import com.google.androidstudiopoet.generators.bazel.*
 import com.google.androidstudiopoet.utils.joinPath
+import com.google.androidstudiopoet.utils.joinPaths
 
 class BazelWorkspaceBlueprint(val projectRoot: String) {
 
   val workspacePath = projectRoot.joinPath("WORKSPACE")
 
-  val gmavenRulesTag = "20180607-1"
+  val aswbDir = projectRoot.joinPath(".aswb")
 
+  val bazelprojectFile = projectRoot.joinPaths(listOf(".aswb", ".bazelproject"))
+
+  val bazelRcFile = projectRoot.joinPath(".bazelrc")
 }

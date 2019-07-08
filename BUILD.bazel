@@ -1,0 +1,36 @@
+load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_library", "define_kt_toolchain")
+
+kt_jvm_library(
+    name = "aspoet-input",
+    srcs = glob(["aspoet-input/src/main/**/*.kt"]),
+    deps = [
+        "@maven//:org_jetbrains_kotlin_kotlin_stdlib_jdk8",
+    ],
+)
+
+kt_jvm_library(
+    name = "aspoet_lib",
+    srcs = glob(["aspoet/src/main/**/*.kt"]),
+    deps = [
+        ":aspoet-input",
+        "@maven//:org_jetbrains_kotlin_kotlin_stdlib_jdk8",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_squareup_javapoet",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
+        "@maven//:junit_junit",
+        "@maven//:commons_io_commons_io",
+    ],
+)
+
+java_binary(
+    name = "aspoet",
+    runtime_deps = [":aspoet_lib"],
+    main_class = "com.google.androidstudiopoet.AndroidStudioPoet",
+)
+
+define_kt_toolchain(
+    name = "kotlin_toolchain",
+    api_version = "1.3",
+    jvm_target = "1.8",
+    language_version = "1.3",
+)
